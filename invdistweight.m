@@ -2,7 +2,7 @@ function [u, dists] = invdistweight(varargin)
 %INVDISTWEIGHT Inverse distance weighting interpolation
 %
 % u = invdistweight(uobs, p, xy, xyobs)
-% u = invdistweight(uobs, p, xy, xyobs, xypoly, coord)
+% u = invdistweight(uobs, p, xy, xyobs, coord)
 % u = invdistweight(uobs, p, 'dist', dists)
 % [u, dist] = invdistweight(...)
 % 
@@ -57,13 +57,13 @@ p1.addRequired('uobs',   @(x) validateattributes(x, {'numeric'}, {'column'}));
 p1.addRequired('p',      @(x) validateattributes(x, {'numeric'}, {'scalar', 'nonnegative'}));
 p1.addRequired('xy',     @(x) validateattributes(x, {'numeric'}, {'ncols', 2}));
 p1.addRequired('xyobs',  @(x) validateattributes(x, {'numeric'}, {'ncols', 2}));
-p1.addOptional('xypoly', [],     @(x) validateattributes(x, {'numeric'}, {'ncols', 2}));
+% p1.addOptional('xypoly', [],     @(x) validateattributes(x, {'numeric'}, {'ncols', 2}));
 p1.addOptional('coord',  'cart', @(x) validateattributes(x, {'char'}, {}));
 
 p2 = inputParser;
 p2.addRequired('uobs',   @(x) validateattributes(x, {'numeric'}, {'column'}));
 p2.addRequired('p',      @(x) validateattributes(x, {'numeric'}, {'scalar', 'nonnegative'}));
-p2.addParamValue('dist', [],      @(x) validateattributes(x, {'numeric'}, {'2d'}));
+p2.addParameter('dist', [],      @(x) validateattributes(x, {'numeric'}, {'2d'}));
 
 % Make sure input fits one of the two options
 
@@ -97,19 +97,15 @@ else
     nobs = size(In.xyobs,1);
     npt  = size(In.xy,1);
     
-    if isempty(In.xypoly) % No bounding polygon
-        [srcidx, snkidx] = ndgrid(1:nobs, 1:npt);
-        xy1 = In.xyobs(srcidx,:);
-        xy2 = In.xy(snkidx,:);
-        switch In.coord
-            case 'cart'
-                dists = sqrt(sum((xy1 - xy2).^2,2));
-                dists = reshape(dists, size(srcidx));
-            case 'geo'
-                dists = deg2km(distance(xy1(:,2), xy1(:,1), xy2(:,2), xy2(:,1))); 
-        end
-    else                  % Bounding polygon
-        dists = costdistance(In.xypoly, 'src', In.xyobs, 'snk', In.xy, 'coord', In.coord);
+    [srcidx, snkidx] = ndgrid(1:nobs, 1:npt);
+    xy1 = In.xyobs(srcidx,:);
+    xy2 = In.xy(snkidx,:);
+    switch In.coord
+        case 'cart'
+            dists = sqrt(sum((xy1 - xy2).^2,2));
+            dists = reshape(dists, size(srcidx));
+        case 'geo'
+            dists = deg2km(distance(xy1(:,2), xy1(:,1), xy2(:,2), xy2(:,1))); 
     end
 
 end
