@@ -8,7 +8,7 @@ function [u, dists] = invdistweight(varargin)
 % 
 % This function performs inverse distance weighting interpolation based on
 % known values for a set of scattered points, using either Euclidean or
-% constrained shortest-path distance metrics.
+% geographic distance metrics.
 %
 % Input variables:
 %
@@ -35,8 +35,8 @@ function [u, dists] = invdistweight(varargin)
 %           addition to being useful for flexible definition of distance,
 %           this can also speed up calculations when using the same
 %           observation and destination points with different datasets,
-%           since the distance calculation (particularly with constraining
-%           polygons) is the most time-consuming part of this code.
+%           since the distance calculation is the most time-consuming part
+%           of this code. 
 %
 % Output variables:
 %
@@ -45,6 +45,8 @@ function [u, dists] = invdistweight(varargin)
 %   dist:   n1 x n2 distance matrix, where dist(i,j) is the distance from
 %           observation i to interpolation point j.  For geographic
 %           coordinates, units are km.
+
+% Copyright 2015 Kelly Kearney
 
 %-----------------------
 % Parse input
