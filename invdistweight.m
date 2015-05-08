@@ -23,9 +23,6 @@ function [u, dists] = invdistweight(varargin)
 %   
 %   xyobs:  n1 x 2 matrix, x and y coordinates of observed points
 %
-%   xypoly: np x 2 array, x and y coordinates for polygon defining the
-%           domain.  See costdistance.m for details.
-%
 %   coord:  'cart' or 'geo', specifying whether coordinates are defined in
 %           cartesion (x/y) or geographic (lon/lat) coordinates.
 %
@@ -108,6 +105,7 @@ else
             dists = reshape(dists, size(srcidx));
         case 'geo'
             dists = deg2km(distance(xy1(:,2), xy1(:,1), xy2(:,2), xy2(:,1))); 
+            dists = reshape(dists, size(srcidx));
     end
 
 end
